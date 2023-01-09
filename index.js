@@ -4,15 +4,23 @@ var requests = require("requests");
 
 const homeFile = fs.readFileSync("home.html", "utf-8");
 
+function temperatureConverter(valNum) {
+    valNum = parseFloat(valNum);
+    let temp =(valNum-32)/1.8;
+    return temp.toFixed(1);
+  }
+
 const replaceVal = (tempVal, orgVal) => {
-    let temperature = tempVal.replace("{%tempval%}", orgVal.main.temp);
-     temperature = temperature.replace("{%tempmax%}", orgVal.main.temp_min);
-     temperature = temperature.replace("{%tempmin%}", orgVal.main.temp_max);
+    let temperature = tempVal.replace("{%tempval%}", temperatureConverter(orgVal.main.temp));
+     temperature = temperature.replace("{%tempmax%}", temperatureConverter(orgVal.main.temp_min));
+     temperature = temperature.replace("{%tempmin%}", temperatureConverter(orgVal.main.temp_max));
      temperature = temperature.replace("{%location%}", orgVal.name);
      temperature = temperature.replace("{%country%}", orgVal.sys.country);
      temperature = temperature.replace("{%tempstatus%}", orgVal.weather[0].main);
  return temperature;
 }
+
+
 
 const server = http.createServer((req,res) => {
    if(req.url === "/"){
